@@ -59,6 +59,7 @@ print G "done."
 
 LINUX="
   -platform linux-clang \
+  -openssl-runtime \
   -egl \
   -opengl es2 \
   -no-icu \
