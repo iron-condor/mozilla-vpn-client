@@ -79,6 +79,7 @@ dpkg-source -x ${DSCFILE} $(pwd)/mozillavpn-source/
 DPKG_PACKAGE_SRCNAME=$(dpkg-parsechangelog -l mozillavpn-source/debian/changelog -S Source)
 DPKG_PACKAGE_BASE_VERSION=$(dpkg-parsechangelog -l mozillavpn-source/debian/changelog -S Version)
 DPKG_PACKAGE_DIST_VERSION=${DPKG_PACKAGE_BASE_VERSION}-${DIST}1
+DPKG_PACKAGE_BUILD_ARGS="--unsigned-source"
 
 # Update the changelog to release for the target distribution.
 if [[ -z "$TASK_OWNER" ]]; then
@@ -99,6 +100,7 @@ fi
 
 if [[ "$CONDAENV" == "Y" ]]; then
   ## Install build tooling from Conda.
+  DPKG_PACKAGE_BUILD_ARGS="${DPKG_PACKAGE_BUILD_ARGS} --no-check-builddeps"
   source /opt/conda/etc/profile.d/conda.sh
   conda env create -f $(pwd)/mozillavpn-source/env.yml
   conda activate vpn
@@ -111,7 +113,7 @@ else
 fi
 
 # Build the packages
-(cd mozillavpn-source/ && dpkg-buildpackage --unsigned-source --build=full)
+(cd mozillavpn-source/ && dpkg-buildpackage ${DPKG_PACKAGE_BUILD_ARGS} --build=full)
 
 # Gather the build artifacts for export
 tar -cvzf /builds/worker/artifacts/mozillavpn-${DIST}.tar.gz *.deb *.ddeb *.buildinfo *.changes *.dsc *.debian.tar.xz
