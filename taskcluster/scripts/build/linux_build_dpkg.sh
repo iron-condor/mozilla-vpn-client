@@ -15,10 +15,12 @@ helpFunction() {
   echo "Build options:"
   echo "  -d, --dist DIST     Build packages for distribution DIST (defaut: ${VERSION_CODENAME})"
   echo "  -s, --static        Build packages for statically linked Qt."
+  echo "  -c, --conda         Build packages using Conda for build dependencies."
   echo "  -h, --help          Display this message and exit"
 }
 
 STATICQT=N
+CONDAENV=N
 
 ## Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -34,6 +36,11 @@ while [[ $# -gt 0 ]]; do
     -s|--static)
       STATICQT=Y
       DIST="static"
+      shift
+      ;;
+    
+    -c|--conda)
+      CONDAENV=Y
       shift
       ;;
 
@@ -90,10 +97,18 @@ if [[ "$STATICQT" == "Y" ]]; then
   sed -rie '/\s+(qt6-|qml6-|libqt6|qmake)/d' $(pwd)/mozillavpn-source/debian/control
 fi
 
-# Install the package build dependencies.
-mk-build-deps $(pwd)/mozillavpn-source/debian/control
-sudo apt -y install ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
-rm -f ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
+if [[ "$CONDAENV" == "Y" ]]; then
+  ## Install build tooling from Conda.
+  source /opt/conda/etc/profile.d/conda.sh
+  conda env create -f $(pwd)/mozillavpn-source/env.yml
+  conda activate vpn
+  conda info
+else
+  # Install the package build dependencies.
+  mk-build-deps $(pwd)/mozillavpn-source/debian/control
+  sudo apt -y install ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
+  rm -f ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
+fi
 
 # Build the packages
 (cd mozillavpn-source/ && dpkg-buildpackage --unsigned-source --build=full)

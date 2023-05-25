@@ -65,6 +65,13 @@ RUN apt-get -y install libfontconfig1-dev \
 ## Install CMake from buster-backports
 RUN apt-get -y install -t bullseye-backports cmake
 
+## Install Conda
+RUN curl https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc | gpg --dearmor > /usr/share/keyrings/conda-archive-keyring.gpg
+RUN chmod 644 /usr/share/keyrings/conda-archive-keyring.gpg
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/conda-archive-keyring.gpg] https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main" > /etc/apt/sources.list.d/conda.list
+RUN apt-get update -q
+RUN apt-get -y install conda
+
 #----------------------------------------------------------------------------------------------------------------------
 #-- Worker User -------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
