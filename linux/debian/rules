@@ -11,6 +11,11 @@ ifneq (ok,$(shell dpkg --compare-versions $(GOLANG_NATIVE_VERSION) ge 2:1.18 && 
 	export PATH := $(GODIR)/bin:$(PATH)
 endif
 
+# Bring in some extras if building within a conda environment.
+ifneq ($(CONDA_PREFIX),)
+	export PKG_CONFIG_PATH := $(CONDA_PREFIX)
+endif
+
 %:
 	dh $@ --with=systemd --buildsystem=cmake+ninja --warn-missing
 

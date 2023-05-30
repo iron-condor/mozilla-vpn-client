@@ -104,6 +104,7 @@ if [[ "$CONDAENV" == "Y" ]]; then
   source /opt/conda/etc/profile.d/conda.sh
   conda env create -f $(pwd)/mozillavpn-source/env.yml
   conda activate vpn
+  $(pwd)/mozillavpn-source/scripts/linux/conda_install_extras.sh
   conda info
 else
   # Install the package build dependencies.
