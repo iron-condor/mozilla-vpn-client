@@ -10,3 +10,8 @@ if [[ -z "$CONDA_PREFIX" ]]; then
 fi
 
 conda install -y -c conda-forge libsecret=0.18.8
+
+# Horrible Hack! libsecret will complain if this dir doesn't exist
+# but technically we are still using the host OS's version of glib.
+mkdir -p $CONDA_PREFIX/include/glib-2.0
+mkdir -p $CONDA_PREFIX/lib/glib-2.0/include
