@@ -28,6 +28,7 @@ RUN apt-get -y install build-essential \
                        equivs \
                        libclang-dev \
                        libgl1-mesa-dev \
+                       libglib2.0-dev \
                        locales \
                        ninja-build \
                        patchelf \
