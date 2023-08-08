@@ -9,7 +9,7 @@ if [[ -z "$CONDA_PREFIX" ]]; then
     exit 1
 fi
 
-conda install -y -c conda-forge libsecret=0.18.8
+conda install -y -c conda-forge libsecret=0.18.8 libcap=2.69
 
 # Horrible Hack! libsecret will complain if this dir doesn't exist
 # but technically we are still using the host OS's version of glib.
