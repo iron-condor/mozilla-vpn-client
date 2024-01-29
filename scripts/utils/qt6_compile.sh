@@ -141,7 +141,6 @@ mkdir -p $BUILDDIR
   -no-feature-style-mac \
   -no-feature-style-windows \
   -no-feature-textmarkdownwriter \
-  -no-feature-cssparser \
   -no-feature-itemmodeltester \
   -no-feature-sql-sqlite \
   -no-feature-sql \
