@@ -57,6 +57,10 @@ if [[ -z "$DIST" ]]; then
   DIST="${VERSION_CODENAME}"
 fi
 
+# Use Rust from fetches, if present.
+export PATH=${MOZ_FETCHES_DIR}/rust-1.69.0-x86_64-unknown-linux-gnu/cargo/bin:${PATH}
+export PATH=${MOZ_FETCHES_DIR}/rust-1.69.0-x86_64-unknown-linux-gnu/rustc/bin:${PATH}
+
 # Update the package database, just in case.
 sudo apt-get update
 
@@ -89,12 +93,6 @@ dch -c $(pwd)/mozillavpn-source/debian/changelog -v ${DPKG_PACKAGE_DIST_VERSION}
 if [[ "$STATICQT" == "Y" ]]; then
   export PATH=${MOZ_FETCHES_DIR}/qt_dist/bin:${PATH}
   sed -rie '/\s+(qt6-|qml6-|libqt6|qmake)/d' $(pwd)/mozillavpn-source/debian/control
-
-  # Install rust from fetches too.
-  mkdir $(pwd)/tools
-  ls -al ${MOZ_FETCHES_DIR}
-  ${MOZ_FETCHES_DIR}/rust-1.69.0-x86_64-unknown-linux-gnu/install.sh --prefix=$(pwd)/tools
-  export PATH=${PATH}:/$(pwd)/tools/bin
 fi
 
 # Install the package build dependencies.
