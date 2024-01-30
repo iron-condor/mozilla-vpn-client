@@ -15,12 +15,10 @@ helpFunction() {
   echo "Build options:"
   echo "  -d, --dist DIST     Build packages for distribution DIST (defaut: ${VERSION_CODENAME})"
   echo "  -s, --static        Build packages for statically linked Qt."
-  echo "  -c, --conda         Build packages using Conda for build dependencies."
   echo "  -h, --help          Display this message and exit"
 }
 
 STATICQT=N
-CONDAENV=N
 
 ## Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -36,11 +34,6 @@ while [[ $# -gt 0 ]]; do
     -s|--static)
       STATICQT=Y
       DIST="static"
-      shift
-      ;;
-    
-    -c|--conda)
-      CONDAENV=Y
       shift
       ;;
 
@@ -96,22 +89,18 @@ dch -c $(pwd)/mozillavpn-source/debian/changelog -v ${DPKG_PACKAGE_DIST_VERSION}
 if [[ "$STATICQT" == "Y" ]]; then
   export PATH=${MOZ_FETCHES_DIR}/qt_dist/bin:${PATH}
   sed -rie '/\s+(qt6-|qml6-|libqt6|qmake)/d' $(pwd)/mozillavpn-source/debian/control
+
+  # Install rust from fetches too.
+  mkdir $(pwd)/tools
+  ls -al ${MOZ_FETCHES_DIR}
+  ${MOZ_FETCHES_DIR}/rust-1.69.0-x86_64-unknown-linux-gnu/install.sh --prefix=$(pwd)/tools
+  export PATH=${PATH}:/$(pwd)/tools/bin
 fi
 
-if [[ "$CONDAENV" == "Y" ]]; then
-  ## Install build tooling from Conda.
-  DPKG_PACKAGE_BUILD_ARGS="${DPKG_PACKAGE_BUILD_ARGS} --no-check-builddeps"
-  source /opt/conda/etc/profile.d/conda.sh
-  conda env create -f $(pwd)/mozillavpn-source/env.yml
-  conda activate vpn
-  $(pwd)/mozillavpn-source/scripts/linux/conda_install_extras.sh
-  conda info
-else
-  # Install the package build dependencies.
-  mk-build-deps $(pwd)/mozillavpn-source/debian/control
-  sudo apt -y install ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
-  rm -f ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
-fi
+# Install the package build dependencies.
+mk-build-deps $(pwd)/mozillavpn-source/debian/control
+sudo apt -y install ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
+rm -f ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
 
 # Build the packages
 (cd mozillavpn-source/ && dpkg-buildpackage ${DPKG_PACKAGE_BUILD_ARGS} --build=full)
