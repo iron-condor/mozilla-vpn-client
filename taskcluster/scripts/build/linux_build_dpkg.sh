@@ -57,14 +57,6 @@ if [[ -z "$DIST" ]]; then
   DIST="${VERSION_CODENAME}"
 fi
 
-# Use Rust from fetches, if present.
-# This is getting sloppy - maybe we should run this in the docker
-# image generation intead.
-RUST_INSTALL_DIR=${MOZ_FETCHES_DIR}/rust-1.69.0-x86_64-unknown-linux-gnu
-export PATH=${RUST_INSTALL_DIR}/cargo/bin:${RUST_INSTALL_DIR}/rustc/bin:${PATH}
-export LD_LIBRARY_PATH=${RUST_INSTALL_DIR}/rustc/lib:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=${RUST_INSTALL_DIR}/rust-std-x86_64-unknown-linux-gnu/lib:${LD_LIBRARY_PATH}
-
 # Update the package database, just in case.
 sudo apt-get update
 

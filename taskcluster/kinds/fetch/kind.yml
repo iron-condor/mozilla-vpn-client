@@ -87,12 +87,3 @@ tasks:
             size: 446046644
             sha256: 68ec769ed98206784234c1c8dfae7ebb3f1be869cddfca984bb81104542a6721
             artifact-name: qt.zip
-
-    rust-linux-static:
-        description: Rust Toolchain for Linux
-        fetch:
-            type: static-url
-            url: https://static.rust-lang.org/dist/rust-1.69.0-x86_64-unknown-linux-gnu.tar.gz
-            size: 313223558
-            sha256: 2ca4a306047c0b8b4029c382910fcbc895badc29680e0332c9df990fd1c70d4f
-            artifact-name: rust-x86_64-unknown-linux-gnu.tar.gz

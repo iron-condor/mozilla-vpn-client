@@ -92,8 +92,6 @@ linux/static:
     fetches:
         toolchain:
             - qt-linux
-        fetch:
-            - rust-linux-static
     worker:
         docker-image: {in-tree: linux-qt6-build}
     run:
