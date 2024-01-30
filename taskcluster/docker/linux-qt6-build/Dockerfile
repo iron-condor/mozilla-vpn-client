@@ -67,6 +67,13 @@ RUN apt-get -y install libfontconfig1-dev \
 ## Install CMake from buster-backports
 RUN apt-get -y install -t bullseye-backports cmake
 
+## Install Rust
+RUN curl https://static.rust-lang.org/dist/rust-1.69.0-x86_64-unknown-linux-gnu.tar.gz \
+        -o /tmp/rust-1.69.0-x86_64-unknown-linux-gnu.tar.gz
+RUN tar -xf -C /tmp /tmp/rust-1.69.0-x86_64-unknown-linux-gnu.tar.gz
+RUN /tmp/rust-1.69.0-x86_64-unknown-linux-gnu/install.sh
+RUN rm -rf /tmp/rust-1.69.0-x86_64-unknown-linux-gnu /tmp/rust-1.69.0-x86_64-unknown-linux-gnu.tar.gz
+
 ## Install Conda
 RUN curl https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc | gpg --dearmor > /usr/share/keyrings/conda-archive-keyring.gpg
 RUN chmod 644 /usr/share/keyrings/conda-archive-keyring.gpg
