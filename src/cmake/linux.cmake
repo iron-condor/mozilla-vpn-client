@@ -10,11 +10,17 @@ if (QT_FEATURE_static)
     target_link_options(mozillavpn PRIVATE "-static")
 endif()
 
+# Link to libcap and libsecret
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(libsecret REQUIRED IMPORTED_TARGET libsecret-1)
-pkg_check_modules(libcap REQUIRED IMPORTED_TARGET libcap)
-target_link_libraries(mozillavpn PRIVATE PkgConfig::libsecret PkgConfig::libcap)
-target_link_libraries(mozillavpn PRIVATE PkgConfig::libsecret)
+pkg_check_modules(LIBSECRET REQUIRED IMPORTED_TARGET libsecret-1)
+pkg_check_modules(LIBCAP REQUIRED IMPORTED_TARGET libcap)
+if (QT_FEATURE_static)
+    target_link_libraries(mozillavpn PRIVATE ${LIBSECRET_STATIC_LIBRARIES} ${LIBCAP_STATIC_LIBRARIES})
+    target_include_directories(mozillavpn PRIVATE ${LIBSECRET_STATIC_INCLUDE_DIRS} ${LIBCAP_STATIC_INCLUDE_DIRS})
+    target_compile_options(mozillavpn PRIVATE ${LIBSECRET_STATIC_CFLAGS} ${LIBCAP_STATIC_CFLAGS})
+else()
+    target_link_libraries(mozillavpn PRIVATE PkgConfig::LIBSECRET PkgConfig::LIBCAP)
+endif()
 
 # Linux platform source files
 target_sources(mozillavpn PRIVATE
