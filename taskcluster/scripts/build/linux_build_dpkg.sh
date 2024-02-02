@@ -70,6 +70,7 @@ if [[ ! -f "$DSCFILE" ]]; then
 fi
 dpkg-source -x ${DSCFILE} $(pwd)/mozillavpn-source/
 DPKG_PACKAGE_SRCNAME=$(dpkg-parsechangelog -l mozillavpn-source/debian/changelog -S Source)
+DPKG_HOST_ARCHITECTURE=$(dpkg --print-architecture)
 DPKG_PACKAGE_BASE_VERSION=$(dpkg-parsechangelog -l mozillavpn-source/debian/changelog -S Version)
 DPKG_PACKAGE_DIST_VERSION=${DPKG_PACKAGE_BASE_VERSION}-${DIST}1
 DPKG_PACKAGE_BUILD_ARGS="--unsigned-source"
@@ -100,4 +101,7 @@ rm -f ./${DPKG_PACKAGE_SRCNAME}-build-deps_${DPKG_PACKAGE_DIST_VERSION}_all.deb
 (cd mozillavpn-source/ && dpkg-buildpackage ${DPKG_PACKAGE_BUILD_ARGS} --build=full)
 
 # Gather the build artifacts for export
+shopt -s nullglob
 tar -cvzf /builds/worker/artifacts/mozillavpn-${DIST}.tar.gz *.deb *.ddeb *.buildinfo *.changes *.dsc *.debian.tar.xz
+shopt -u nullglob
+
