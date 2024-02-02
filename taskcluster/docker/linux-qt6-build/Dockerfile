@@ -12,8 +12,10 @@ MAINTAINER Naomi Kirby <naomi@mozilla.com>
 ENV CURL='curl --location --retry 5' \
     DEBIAN_FRONTEND='noninteractive' \
     LANG='en_US.UTF-8' \
-    LC_ALL='en_US.UTF-8' \
     TERM='dumb'
+
+## Ensure that we generate the default locale
+RUN echo "locales locales/locales_to_be_generated multiselect en_US.UTF-8 UTF-8" | debconf-set-selections
 
 ## Enable buster-backports
 RUN echo "deb http://deb.debian.org/debian/ bullseye-backports main" > /etc/apt/sources.list.d/bullseye-backports.list
