@@ -1033,6 +1033,7 @@ void MozillaVPN::subscriptionStarted(const QString& productIdentifier) {
     Q_ASSERT(products->hasProductsRegistered());
   }
 
+  mozilla::glean::outcome::subscription_started.record();
   PurchaseHandler::instance()->startSubscription(productIdentifier);
 }
 
@@ -1075,10 +1076,14 @@ void MozillaVPN::billingNotAvailable() {
 }
 
 void MozillaVPN::subscriptionNotValidated() {
+  mozilla::glean::outcome::subscription_failed.record();
+
   setState(StateSubscriptionNotValidated);
 }
 
 void MozillaVPN::subscriptionFailed() {
+  mozilla::glean::outcome::subscription_failed.record();
+
   subscriptionFailedInternal(false /* canceled by user */);
 }
 
@@ -1127,6 +1132,8 @@ void MozillaVPN::alreadySubscribed() {
 #endif
 
   logger.info() << "Setting state: Subscription Blocked";
+
+  mozilla::glean::outcome::subscription_already_present.record();
   setState(StateSubscriptionBlocked);
 }
 
